@@ -49,14 +49,11 @@ class SegmentTable:
         ax.invert_yaxis()
         plt.show()
 
-
 def add_segment():
     try:
         base, limit = map(int, entry_segment.get().split(","))
         seg_table.add_segment(base, limit)
-        listbox_segments.delete(0, tk.END)
-        for i, (b, l) in enumerate(seg_table.segments):
-            listbox_segments.insert(tk.END, f"Segment {i}: Base {b}, Size {l}")
+        update_listbox()
         entry_segment.delete(0, tk.END)
     except ValueError:
         messagebox.showerror("Error", "Invalid input. Enter base and limit as 'base,limit'")
@@ -71,6 +68,17 @@ def translate_address():
 
 def visualize():
     seg_table.visualize_memory()
+
+def clear_all_segments():
+    """ Clears both the segment listbox and the segment table's data. """
+    seg_table.segments.clear()  # Reset segment table
+    listbox_segments.delete(0, tk.END)  # Clear the listbox
+
+def update_listbox():
+    """ Updates the listbox with the current segments in the table. """
+    listbox_segments.delete(0, tk.END)
+    for i, (b, l) in enumerate(seg_table.segments):
+        listbox_segments.insert(tk.END, f"Segment {i}: Base {b}, Size {l}")
 
 # Create GUI
 root = tk.Tk()
@@ -96,7 +104,7 @@ listbox_segments.pack(pady=5)
 frame_visual_buttons = tk.Frame(root)
 frame_visual_buttons.pack(pady=10)
 tk.Button(frame_visual_buttons, text="Visualize Memory", command=visualize).pack(side=tk.LEFT, padx=5)
-tk.Button(frame_visual_buttons, text="Clear Fields", command=lambda: listbox_segments.delete(0, tk.END)).pack(side=tk.LEFT, padx=5)
+tk.Button(frame_visual_buttons, text="Clear All Segments", command=clear_all_segments).pack(side=tk.LEFT, padx=5)
 
 # Input for logical address
 tk.Label(root, text="Enter Logical Address (segment,offset):").pack(pady=5)
